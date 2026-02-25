@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strawberry Cat Pomodoro</title>
+    <style>
+        :root {
+            --theme-color: #ff3b3b; /* Initial Strawberry Red */
+            --bg-pink: #ffebee;
+            --header-pink: #f8d7da;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #fff;
+            color: #333;
+        }
+
+        /* Top Bar */
+        .header {
+            width: 100%;
+            background-color: var(--header-pink);
+            padding: 10px 40px;
+            display: flex;
+            align-items: center;
+            box-sizing: border-box;
+            justify-content: flex-start;
+        }
+
+        .kofi-box {
+            background: white;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Main Container */
+        .app-container {
+            position: relative;
+            text-align: center;
+            width: 100%;
+            max-width: 800px;
+            padding-top: 40px;
+        }
+
+        .welcome-msg {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-icon {
+            position: absolute;
+            right: 40px;
+            top: 40px;
+            cursor: pointer;
+            font-size: 24px;
+            color: #555;
+        }
+
+        .goal-input {
+            margin: 20px 0;
+            font-size: 1.4rem;
+        }
+
+        .goal-input input {
+            border: none;
+            border-bottom: 2px solid #eee;
+            outline: none;
+            padding: 5px;
+            width: 250px;
+            color: #aaa;
+            text-align: center;
+        }
+
+        /* The Timer Cycle */
+        .timer-box {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            margin: 20px auto;
+        }
+
+        svg { transform: rotate(-90deg); }
+
+        .ring-track {
+            fill: none;
+            stroke: var(--bg-pink);
+            stroke-width: 14;
+        }
+
+        .ring-progress {
+            fill: none;
+            stroke: var(--theme-color);
+            stroke-width: 14;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s linear, stroke 0.4s ease;
+        }
+
+        .strawberry-cat {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px; 
+        }
+
+        /* Time Display */
+        .time-text {
+            font-size: 5rem;
+            font-weight: 600;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .pencil-edit {
+            font-size: 1.5rem;
+            color: #ffd1d1;
+            cursor: pointer;
+        }
+
+        /* Controls */
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+        }
+
+        .circle-btn {
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Theme Modal */
+        #theme-modal {
+            display: none;
+            position: absolute;
+            top: 80px;
+            right: 40px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            z-index: 100;
+            border: 1px solid #f0f0f0;
+        }
+
+        .modal-head {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #888;
+        }
+
+        .colors {
+            display: flex;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .dot:hover { transform: scale(1.1); }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="kofi-box">☕ Ko-fi</div>
+        <a href="#" style="color: #333; text-decoration: none; font-size: 14px;">Buy me a coffee</a>
+    </div>
+
+    <div class="app-container">
+        <div class="theme-icon" onclick="toggleThemeModal()">📝</div>
+
+        <div id="theme-modal">
+            <div class="modal-head">
+                <span>Choose theme</span>
+                <span style="cursor:pointer" onclick="toggleThemeModal()">✕</span>
+            </div>
+            <div class="colors">
+                <div class="dot" style="background:#ff3b3b" onclick="changeTheme('#ff3b3b')"></div>
+                <div class="dot" style="background:#8bc34a" onclick="changeTheme('#8bc34a')"></div>
+                <div class="dot" style="background:#e91e63" onclick="changeTheme('#e91e63')"></div>
+                <div class="dot" style="background:#ffeb3b" onclick="changeTheme('#ffeb3b')"></div>
+                <div class="dot" style="background:#f8bbd0" onclick="changeTheme('#f8bbd0')"></div>
+                <div class="dot" style="background:#f5f5f5; border:1px solid #ddd; display:flex; align-items:center; justify-content:center;">+</div>
+            </div>
+        </div>
+
+        <div class="welcome-msg">
+            🍓 Welcome to pomodoro Strawberry Cat!
+        </div>
+
+        <div class="goal-row">
+            Goal : <input type="text" placeholder="Type your goal here" style="border:none; border-bottom:1px solid #ccc; outline:none; font-size:1.2rem; color:#bbb;">
+        </div>
+
+        <div class="timer-box">
+            <svg width="320" height="320">
+                <circle class="ring-track" cx="160" cy="160" r="140"></circle>
+                <circle id="progress-ring" class="ring-progress" cx="160" cy="160" r="140"></circle>
+            </svg>
+            <img src="Cat_strawberry-removebg-preview.png" alt="Cute Strawberry Cat" class="strawberry-cat">
+        </div>
+
+        <div class="time-text">
+            <span id="timer-display">45:55</span>
+            <span class="pencil-edit" onclick="manualSet()">✏️</span>
+        </div>
+
+        <div class="buttons">
+            <button class="circle-btn" id="state-btn" onclick="toggleTimer()">II</button>
+            <button class="circle-btn" onclick="resetTimer()">↻</button>
+        </div>
+    </div>
+
+    <script>
+        let total = (45 * 60) + 55;
+        let remaining = total;
+        let timerRunning = false;
+        let countdown = null;
+
+        const progressRing = document.getElementById('progress-ring');
+        const timerDisplay = document.getElementById('timer-display');
+        const stateBtn = document.getElementById('state-btn');
+        const themeModal = document.getElementById('theme-modal');
+
+        const radius = 140;
+        const circumference = 2 * Math.PI * radius;
+        progressRing.style.strokeDasharray = circumference;
+
+        function updateDisplay() {
+            const m = Math.floor(remaining / 60);
+            const s = remaining % 60;
+            timerDisplay.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+
+            const elapsed = total - remaining;
+            const percentage = elapsed / total;
+            const offset = circumference - (percentage * circumference);
+            progressRing.style.strokeDashoffset = offset;
+        }
+
+        function toggleTimer() {
+            if (timerRunning) {
+                clearInterval(countdown);
+                stateBtn.innerText = "▶";
+            } else {
+                stateBtn.innerText = "II";
+                countdown = setInterval(() => {
+                    if (remaining > 0) {
+                        remaining--;
+                        updateDisplay();
+                    } else {
+                        clearInterval(countdown);
+                        alert("Timer Finished!");
+                    }
+                }, 1000);
+            }
+            timerRunning = !timerRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(countdown);
+            timerRunning = false;
+            remaining = total;
+            stateBtn.innerText = "▶";
+            updateDisplay();
+        }
+
+        function toggleThemeModal() {
+            themeModal.style.display = (themeModal.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function changeTheme(color) {
+            document.documentElement.style.setProperty('--theme-color', color);
+            toggleThemeModal();
+        }
+
+        function manualSet() {
+            let userMin = prompt("Set timer (minutes):", "25");
+            if (userMin != null) {
+                total = parseInt(userMin) * 60;
+                remaining = total;
+                updateDisplay();
+            }
+        }
+
+        updateDisplay();
+    </script>
+</body>
+</html>
